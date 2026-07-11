@@ -26,9 +26,20 @@
 - **More budget doesn't close the gap.** tail/center abs-error ratio *grows* 4.2×→10× as budget rises (center error collapses faster than tail). So it's not merely a tiny-budget artifact.
 - **Mechanism (hypothesis):** percentiles of per-template accuracy estimated from ~2 seen items/template are noise-inflated; Rasch borrowing-strength helps (8.4× vs baseline ~20×) but doesn't deconvolve the sampling noise from the tail.
 
+### FIX validated (subset, MMLU @200)
+- Fixed-point parametric-bootstrap deconvolution (src/fix_deconv.py) estimates the true-
+  spread shrink factor s from budgeted data ALONE (never sees true quantiles), then linearly
+  shrinks per-template accuracy estimates before taking quantiles.
+- Result: tail |err| 0.189 -> 0.068 (**64% lower**), improves ALL quantiles incl. median;
+  recovered shrink s≈0.36 (~2.8x deflation). Honestly under-corrects vs ideal (can't fully
+  recover a tiny true spread from ~2 items/template) — itself a useful cautionary point.
+
+### Novelty verdict (this specific finding+fix): CLEAR
+- No paper reports PromptEval/IRT multi-prompt quantile over-dispersion + deconvolution fix.
+- Closest: "Tail-Shape Estimation in LLM Evaluation Is Fragile" (2606.16511) — ORTHOGONAL
+  (toxicity reward-model extreme-value tails; not PromptEval/prompt-performance quantiles).
+  Good related-work cite, not a scoop. Also cite Madaan "Quantifying Variance" (2406.10229).
+
 ### Next
-- Test mechanism directly: std(est per-template acc) vs std(true); confirm noise-inflation.
-- FIX: variance-deconvolution / empirical-Bayes shrinkage of the estimated per-template
-  distribution before taking quantiles. Show it reduces tail error without hurting center.
-- Targeted novelty check on this specific finding+fix.
-- Generalization: BBH (generative) + LMentry. Figures. Paper.
+- Full-grid fix across all budgets (running) + generalize to BBH (generative) & LMentry.
+- Publication figures. arXiv-style manuscript. Reviewer-2 pass.

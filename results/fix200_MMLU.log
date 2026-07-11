@@ -1,0 +1,25 @@
+/Users/anupam/Works/research/research_1/src/fix_deconv.py:83: DeprecationWarning: numpy.core.numeric is deprecated and has been renamed to numpy._core.numeric. The numpy._core namespace contains private NumPy internals and its use is discouraged, as NumPy internals can change without warning in any release. In practice, most real-world usage of numpy.core is to access functionality in the public NumPy API. If that is the case, use the public NumPy API. If not, you are using NumPy internals. If you would still like to access an internal attribute, use numpy._core.numeric._frombuffer.
+  Ys = pickle.load(open(os.path.join(REPO, "data", "Ys.pickle"), "rb"))
+[MMLU] abstract_algebra done
+[MMLU] anatomy done
+[MMLU] astronomy done
+[MMLU] business_ethics done
+[MMLU] clinical_knowledge done
+[MMLU] college_biology done
+[MMLU] college_chemistry done
+[MMLU] college_computer_science done
+[MMLU] college_mathematics done
+[MMLU] college_medicine done
+[MMLU] college_physics done
+[MMLU] computer_security done
+[MMLU] conceptual_physics done
+[MMLU] econometrics done
+[MMLU] electrical_engineering done
+[MMLU] elementary_mathematics done
+[MMLU] formal_logic done
+[MMLU] global_facts done
+[MMLU] high_school_biology done
+[MMLU] high_school_chemistry done
+[MMLU] high_school_computer_science done
+[MMLU] high_school_european_history done
+[MMLU] high_school_geography done

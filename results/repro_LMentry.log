@@ -1,0 +1,52 @@
+/Users/anupam/Works/research/research_1/src/repro_core.py:36: DeprecationWarning: numpy.core.numeric is deprecated and has been renamed to numpy._core.numeric. The numpy._core namespace contains private NumPy internals and its use is discouraged, as NumPy internals can change without warning in any release. In practice, most real-world usage of numpy.core is to access functionality in the public NumPy API. If that is the case, use the public NumPy API. If not, you are using NumPy internals. If you would still like to access an internal attribute, use numpy._core.numeric._frombuffer.
+  Ys = pickle.load(f)
+/Users/anupam/Works/research/research_1/src/repro_core.py:38: DeprecationWarning: numpy.core.numeric is deprecated and has been renamed to numpy._core.numeric. The numpy._core namespace contains private NumPy internals and its use is discouraged, as NumPy internals can change without warning in any release. In practice, most real-world usage of numpy.core is to access functionality in the public NumPy API. If that is the case, use the public NumPy API. If not, you are using NumPy internals. If you would still like to access an internal attribute, use numpy._core.numeric._frombuffer.
+  Xs = pickle.load(f)
+[LMentry] task 1/10 done (all_words_from_category)
+[LMentry] task 2/10 done (any_words_from_category)
+[LMentry] task 3/10 done (ends_with_word)
+[LMentry] task 4/10 done (first_alphabetically)
+[LMentry] task 5/10 done (homophones)
+[LMentry] task 6/10 done (less_letters)
+[LMentry] task 7/10 done (more_letters)
+[LMentry] task 8/10 done (rhyming_word)
+[LMentry] task 9/10 done (word_before)
+[LMentry] task 10/10 done (word_not_containing)
+
+=== ABSOLUTE error by method x quantile x budget (mean) ===
+quantile               5       25      50      75      95
+method     budget                                        
+baseline   200     0.0721  0.1845  0.2282  0.4806  0.4799
+           400     0.0721  0.1717  0.1140  0.2025  0.3729
+           800     0.0638  0.0919  0.0659  0.0966  0.2332
+           1600    0.0469  0.0610  0.0354  0.0538  0.1388
+prompteval 200     0.0628  0.0748  0.0590  0.0835  0.2215
+           400     0.0544  0.0647  0.0389  0.0677  0.2201
+           800     0.0446  0.0650  0.0334  0.0635  0.1892
+           1600    0.0348  0.0435  0.0222  0.0394  0.1149
+
+=== SIGNED error (est - true) by method x quantile x budget (mean) — the key test ===
+quantile               5       25      50      75      95
+method     budget                                        
+baseline   200    -0.0721 -0.1606  0.0433  0.4433  0.4799
+           400    -0.0721 -0.1661 -0.0745  0.0886  0.3668
+           800    -0.0638 -0.0907 -0.0409  0.0488  0.2286
+           1600   -0.0465 -0.0600 -0.0235  0.0278  0.1363
+prompteval 200     0.0002 -0.0134 -0.0299 -0.0043  0.2012
+           400    -0.0180 -0.0328 -0.0131  0.0114  0.2129
+           800    -0.0254 -0.0532 -0.0167  0.0412  0.1857
+           1600   -0.0263 -0.0399 -0.0164  0.0270  0.1126
+
+=== SPREAD RATIO est(P95-P5)/true(P95-P5) [<1 => compression] & best-prompt regret ===
+                   spread_ratio  best_regret
+method     budget                           
+baseline   200           3.2857       0.3000
+           400           2.3859       0.2543
+           800           1.9720       0.1684
+           1600          1.6405       0.1117
+prompteval 200           1.7600       0.2726
+           400           1.7837       0.2028
+           800           1.7171       0.1565
+           1600          1.4818       0.1019
+
+saved -> results/repro_full_LMentry_tNone_lNone_s5.json  (n_rec=32000)
