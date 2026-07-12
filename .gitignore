@@ -6,3 +6,6 @@ results/cache/
 *.parquet
 external/
 .venv/
+paper/_pg*.png
+paper/*.aux
+paper/*.log

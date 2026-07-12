@@ -38,13 +38,17 @@ subject$\times$model cells), and---counterintuitively for a regularized estimato
 error is \emph{directional}: the worst prompt is estimated far too low and the best prompt too
 high, so the estimated prompt-sensitivity spread is inflated (median $8.4\times$ the truth).
 The gap does not close with budget; the tail/center error ratio actually \emph{grows} from
-$4.2\times$ to $10\times$ as the budget increases, because the center converges faster. We
-trace the effect to finite-sample over-dispersion and introduce a \textbf{self-contained
-deconvolution correction} that estimates the noise-induced spread inflation from the budgeted
-data alone and shrinks the estimated distribution accordingly, cutting tail error by
-$\sim\!64\%$ without additional labels. Our results are a cautionary, actionable refinement of
-multi-prompt evaluation: trust its center, correct or distrust its tails. All code and
-re-analysis run on a laptop and reproduce from the authors' public data.
+$4.2\times$ to $10\times$ as the budget increases, because the center converges faster. A
+controlled simulation with \emph{known} ground truth reproduces the over-dispersion and shows
+it is largest exactly when the true prompt-sensitivity is small---the common regime. We then
+show the bias is correctable \emph{in principle} (an oracle shrinkage removes $83$--$94\%$ of
+the tail error) and that a simple, label-free \textbf{split-half reliability correction}
+realizes most of this where over-dispersion is severe and symmetric (MMLU: $82\%$ tail-error
+reduction). Just as importantly, we show \emph{where correction fails}: when prompt-sensitivity
+is genuinely large or the budget drops below one item per template, uniform shrinkage
+over-corrects, so a robust budget-only tail correction remains open. The practical rule is
+simple: \emph{trust the center; correct the tails only when reliability can be estimated}. All
+code and re-analysis run on a laptop and reproduce from the authors' public data.
 \end{abstract}
 
 \section{Introduction}
@@ -78,11 +82,13 @@ budget (\S\ref{sec:gap}). The single averaged error metric reported in prior wor
 performance is overstated and prompt-robustness understated (\S\ref{sec:mech}). We attribute
 it to finite-sample inflation and show the spread ratio decays monotonically toward $1$ with
 budget.
-\item \textbf{A self-contained correction.} A parametric-bootstrap deconvolution estimates the
-inflation from the budgeted data alone and shrinks the estimate, cutting tail error by
-$\sim\!64\%$ with no extra labels (\S\ref{sec:fix}).
+\item \textbf{Correctability and its limits.} A controlled synthetic study with known ground
+truth confirms the mechanism, and shows the bias is correctable in principle. A label-free
+split-half reliability correction removes $82\%$ of MMLU tail error, but we also chart where it
+fails (large true spread, or budget below one item per template), leaving robust budget-only
+correction as an open problem (\S\ref{sec:synth}--\ref{sec:fix}).
 \end{enumerate}
-Everything is a re-analysis of public data and runs on a laptop.
+Everything is a re-analysis of public data (plus simulation) and runs on a laptop.
 
 \section{Setup: multi-prompt evaluation and \pe{}}\label{sec:setup}
 For a fixed model and task, let $Y\in\{0,1\}^{P\times I}$ be the correctness matrix over $P$
@@ -189,40 +195,73 @@ small-budget artifact.}
 \label{fig:ratio}
 \end{figure}
 
-\section{A self-contained deconvolution correction}\label{sec:fix}
-The diagnosis---noise-inflated spread---implies a fix. Let $s^\star$ be the factor by which the
-\emph{true} per-template spread must be deflated so that, after the estimator's own inflation at
-budget $B$, it matches the observed spread. We estimate $s^\star$ by a fixed-point parametric
-bootstrap using only the budgeted data: (i) fit Eq.~\eqref{eq:rasch}; (ii) build a synthetic
-truth by deflating the fitted $\hat\theta_p$ toward their mean by a factor $s$; (iii) simulate
-$Y\!\sim\!\mathrm{Bernoulli}$ from it, re-run the same budgeted sampling and estimator, and
-measure the inflation $\mathrm{infl}(s)=\mathrm{std}(\hat a^{\text{sim}})/\mathrm{std}(a^{\text{sim}})$;
-(iv) update $s\leftarrow1/\mathrm{infl}(s)$ to a fixed point. We then shrink the real estimate,
-$\hat a_p^{\text{corr}}=\bar a+s^\star(\hat a_p-\bar a)$, and recompute quantiles. The
-correction uses \emph{no} additional labels and never sees the true quantiles.
+\section{A controlled synthetic study}\label{sec:synth}
+To confirm the mechanism without relying on a finite-item empirical ``truth,'' we simulate
+Rasch worlds ($P{=}I{=}100$) with template abilities $\theta_p\sim\mathcal N(0,\sigma_\theta^2)$
+and item difficulties $\beta_i\sim\mathcal N(0,1)$, so the true per-template accuracy and its
+spread are known exactly. We then run \pe{} at $B{=}200$. The estimator over-disperses precisely
+as observed on real data, and the inflation is \emph{largest when the true spread is smallest}:
+the median estimated/true spread ratio is $6.1\times$ at $\sigma_\theta{=}0.2$ (true spread
+$0.13$), $2.5\times$ at $0.5$, and $1.4\times$ at $1.0$. Small true prompt-sensitivity---the
+common case, and the one on MMLU---is where the tails are least trustworthy. This isolates the
+effect from any property of the released matrices.
 
-On MMLU at $B{=}200$ the correction reduces tail ($q_5,q_{95}$) error from $0.189$ to $0.068$,
-a $\mathbf{64\%}$ reduction, while also improving the center (Table~\ref{tab:fix}). Because it
-shrinks toward the (well-estimated) mean, it cannot harm the median. It is deliberately
-conservative---it recovers a $\sim\!2.8\times$ deflation rather than the full $\sim\!8\times$,
-reflecting the fundamental difficulty of recovering a tiny true spread from ${\sim}2$ observed
-items per template. This residual is itself the honest takeaway: at very small budgets the
-tails should be corrected \emph{and} treated with caution.
+\section{Correctability and its limits}\label{sec:fix}
+The diagnosis implies a remedy: shrink the estimated per-template distribution toward its
+(well-estimated) mean. The question is by how much. An \emph{oracle} that shrinks by the known
+true/estimated spread ratio removes $83$--$94\%$ of the tail error across all $\sigma_\theta$ in
+the synthetic study, confirming the bias is correctable in principle and that shrinkage is the
+right functional form.
+
+For a \emph{feasible}, label-free estimator we use \textbf{split-half reliability}: split the
+budget into two disjoint stratified halves, fit \pe{} on each to get independent noisy estimates
+$a^{A},a^{B}$ of the same per-template accuracies, and note that the noise cancels in the
+cross-moment, so $\widehat{V}_{\text{signal}}=\mathrm{Cov}(a^{A},a^{B})$. With
+$\bar a=\tfrac12(a^A+a^B)$ we shrink by $s=\mathrm{clip}(\widehat V_{\text{signal}}/
+\mathrm{Var}(\bar a),0,1)$ and report quantiles of $\bar a$'s shrunken version. This uses only
+budgeted data and never sees the true quantiles.
+
+On MMLU at $B{=}200$ this removes $\mathbf{82\%}$ of the tail error ($0.226\!\to\!0.041$;
+Table~\ref{tab:fix}, Fig.~\ref{fig:fix}), matching the oracle in the small-spread regime and
+improving every quantile.
 
 \begin{table}[h]\centering\small
-\caption{Deconvolution correction on MMLU at $B{=}200$ (mean $|$error$|$). It improves every
-quantile and cuts tail error by $64\%$. [Full-grid numbers.]}
+\caption{Split-half correction on MMLU at $B{=}200$ (mean $|$error$|$, full grid). It improves
+every quantile and removes $82\%$ of tail error.}
 \label{tab:fix}
 \begin{tabular}{lrrrrr}
 \toprule
 & $q_{5}$ & $q_{25}$ & $q_{50}$ & $q_{75}$ & $q_{95}$ \\
 \midrule
-\pe{} (orig)       & 0.234 & 0.074 & 0.035 & 0.072 & 0.143 \\
-\pe{} + deconv     & 0.085 & 0.037 & 0.020 & 0.026 & 0.051 \\
-reduction          & 64\% & 50\% & 43\% & 64\% & 65\% \\
+\pe{} (orig)       & 0.264 & 0.097 & 0.053 & 0.103 & 0.188 \\
+\pe{} + split-half & 0.041 & 0.030 & 0.026 & 0.031 & 0.041 \\
+reduction          & 84\% & 69\% & 50\% & 70\% & 78\% \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\begin{figure}[h]\centering
+\includegraphics[width=0.52\textwidth]{fig4_correction_mmlu.png}\hfill
+\includegraphics[width=0.46\textwidth]{fig5_crossbench_fix.png}
+\caption{Left: the split-half correction on MMLU flattens the U-shape. Right: the correction is
+not universal---it helps where over-dispersion is severe and symmetric (MMLU, BBH-$q_{95}$) but
+over-corrects on LMentry, whose low tail is already accurate and whose budget falls below one
+item per template.}
+\label{fig:fix}
+\end{figure}
+
+\paragraph{Where it fails---and why (an honest boundary).} The correction is not a universal
+fix, and saying so is part of the contribution. The high tail ($q_{95}$, best-prompt) is
+over-estimated on \emph{all three} benchmarks and the correction reduces its error everywhere
+($52$--$78\%$). But on LMentry the \emph{low} tail is already accurate (its distribution is
+asymmetric), so symmetric shrinkage pulls $q_5$ away from truth and the net tail change is
+negative; and at $B{=}200$ both LMentry ($258$ templates) and BBH ($187$) receive fewer than one
+observed item per template per half, so the reliability estimate itself is unstable. In the
+synthetic study the same failure appears as over-correction at large $\sigma_\theta$. The
+resulting guidance is concrete: apply the correction when over-dispersion is severe and the
+budget affords at least one to two items per template; otherwise treat the tails as
+lower/upper bounds. A reliability-\emph{gated}, asymmetry-aware correction is a natural next
+step.
 
 \section{Generalization}\label{sec:gen}
 To test whether the effect is specific to MMLU's multiple-choice format, we repeat the
@@ -265,18 +304,27 @@ deconvolution correction for multi-prompt performance quantiles are, to our know
 unreported.
 
 \section{Limitations}
-Our study is a re-analysis of three released benchmarks with fixed template sets; the exact
-magnitudes are specific to those matrices and to the Rasch estimator. The correction is a
-variance (spread) correction and assumes the estimated \emph{mean} is approximately unbiased,
-which holds empirically here. We analyze the released additive Rasch model; covariate-augmented
-variants may behave differently, though they share the additive-in-logits structure.
+Our ``truth'' is each benchmark's full-data quantile (all items), following \pe{}'s own
+convention; because full-data accuracies are themselves finite-item estimates, the true spread
+is if anything slightly \emph{over}-stated, making our over-dispersion estimates conservative.
+The exact magnitudes are specific to the three released matrices and the additive Rasch
+estimator; covariate-augmented \pe{} variants share the additive-in-logits structure but may
+differ quantitatively. Our correction is a symmetric variance (spread) correction that assumes
+the estimated \emph{mean} is approximately unbiased (which holds here) and a roughly symmetric
+distribution (which fails on LMentry, \S\ref{sec:fix}); a reliability-gated, asymmetry-aware
+correction is future work. The synthetic study uses a well-specified Rasch generator; real
+prompt$\times$item interactions (which the additive model omits) are an additional,
+complementary source of tail error we do not isolate here.
 
 \section{Conclusion}
 Multi-prompt evaluation delivers on its central promise but not on its tails: the very
 quantiles that make a distribution more informative than a point estimate are the least
-reliable, systematically over-dispersed, and not fixed by more budget. We give a diagnosis, a
-mechanism, and a label-free correction. The practical rule is simple: \emph{trust the center,
-correct or distrust the edges.}
+reliable, systematically over-dispersed, and not made relatively more reliable by more budget.
+We reproduce the method exactly, diagnose the gap and its directional mechanism (confirmed in
+simulation), and show it is correctable in principle, with a simple label-free correction that
+works in the common severe regime and characterized failure modes elsewhere. The practical rule
+is simple: \emph{trust the center; correct the edges only when reliability can be estimated,
+and otherwise read them as bounds.}
 
 \paragraph{Reproducibility.} All code, the exact-match reproduction, and figure-generating
 scripts run on a laptop from the authors' public data; see the repository.

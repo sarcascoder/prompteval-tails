@@ -40,6 +40,30 @@
   (toxicity reward-model extreme-value tails; not PromptEval/prompt-performance quantiles).
   Good related-work cite, not a scoop. Also cite Madaan "Quantifying Variance" (2406.10229).
 
-### Next
-- Full-grid fix across all budgets (running) + generalize to BBH (generative) & LMentry.
-- Publication figures. arXiv-style manuscript. Reviewer-2 pass.
+### Synthetic control (known truth) — validates mechanism, corrected the FIX
+- Simulated Rasch worlds (P=I=100) with controlled true prompt-spread. Over-dispersion
+  appears exactly as predicted and is LARGER when true spread is small (spread ratio 6.1x at
+  sigma_theta=0.2, matching MMLU's ~8x). Confirms mechanism with zero dependence on released data.
+- The earlier bootstrap "fix" was UNRELIABLE (synthetic: only 4-6% vs 64% on real data) — the
+  parametric bootstrap simulates from the already-inflated fit, so it can't see the full
+  inflation. DROPPED it. Good catch by the control.
+
+### FINAL fix = split-half reliability disattenuation (consistent, bootstrap-free)
+- Split budget into 2 disjoint stratified halves -> independent noisy per-template estimates;
+  V_signal = Cov(aA,aB); shrink factor s = clip(V_signal/Var(abar),0,1); shrink toward mean.
+- Validated vs synthetic ORACLE (known-truth shrink): oracle recovers 83-94% tail error at all
+  spreads; split-half matches oracle when true spread is SMALL (83% @ sigma=0.2) but OVER-shrinks
+  when true spread is large (-96% @ sigma=1.0).
+- Real data @ budget 200: MMLU tail |err| 0.226->0.041 (**82% lower**, P5 84%, P95 78%). BUT
+  BBH +42% (P5 slightly worse), LMentry HURTS -57%. Reason: at budget<~2 items/template
+  (LMentry 258 tmpl, BBH 187 tmpl vs 100 cells/half) reliability estimate collapses; and
+  LMentry's over-dispersion is ASYMMETRIC (only high tail inflated) so symmetric shrink harms P5.
+- Honest conclusion: over-dispersion is correctable in principle (oracle) and a simple
+  reliability correction recovers most tail error in the severe symmetric regime (MMLU/MCQ),
+  but robust budget-only correction across benchmarks is an OPEN problem — a genuine finding.
+
+### Universal across all 3 benchmarks
+- Center-tail gap: tail 2.4-4.2x center @200 (Wilcoxon p<=1e-21). High tail (P95/best-prompt)
+  OVER-estimated everywhere (correction helps P95 by 52-78% on all three).
+
+### Next: finalize paper (honest fix framing), figures, repro package, reviewer-2 pass.
