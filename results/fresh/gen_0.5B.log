@@ -1,0 +1,23 @@
+loading Qwen/Qwen2.5-0.5B-Instruct on mps ...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+  marketing: template 1/40 (acc 0.740)
+  marketing: template 11/40 (acc 0.730)
+  marketing: template 21/40 (acc 0.720)
+  marketing: template 31/40 (acc 0.700)
+[Qwen/Qwen2.5-0.5B-Instruct] marketing: Y (40, 100), mean 0.658, per-template acc [0.300,0.770] spread(P95-P5) 0.431
+Generating test split:   0%|          | 0/545 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 545/545 [00:00<00:00, 9034.38 examples/s]
+Generating validation split:   0%|          | 0/60 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 60/60 [00:00<00:00, 40401.07 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 6992.84 examples/s]
+  high_school_psychology: template 1/40 (acc 0.630)
+  high_school_psychology: template 11/40 (acc 0.610)
+  high_school_psychology: template 21/40 (acc 0.630)
+  high_school_psychology: template 31/40 (acc 0.670)
+[Qwen/Qwen2.5-0.5B-Instruct] high_school_psychology: Y (40, 100), mean 0.562, per-template acc [0.220,0.690] spread(P95-P5) 0.391
+Generating test split:   0%|          | 0/306 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 306/306 [00:00<00:00, 6341.16 examples/s]
+Generating validation split:   0%|          | 0/33 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 33/33 [00:00<00:00, 26607.46 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 4964.85 examples/s]
+  nutrition: template 1/40 (acc 0.550)
+  nutrition: template 11/40 (acc 0.530)
+  nutrition: template 21/40 (acc 0.510)
+/Users/anupam/miniconda3/envs/research/lib/python3.12/multiprocessing/resource_tracker.py:279: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '

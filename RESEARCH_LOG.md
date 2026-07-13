@@ -67,3 +67,33 @@
   OVER-estimated everywhere (correction helps P95 by 52-78% on all three).
 
 ### Next: finalize paper (honest fix framing), figures, repro package, reviewer-2 pass.
+
+---
+
+## Robustness extension (IN PROGRESS — PAUSED 2026-07-13)
+Goal: generate FRESH template x item correctness matrices locally (our own models + our own
+independent template bank) to prove the center-vs-tail over-dispersion is a property of the
+ESTIMATOR, not the authors' released-data pipeline. Code: `src/fresh_generate.py` (Qwen2.5 on
+MPS, MMLU MCQ scored by answer-letter log-probs, 40 templates x 100 items) + `src/fresh_analyze.py`
+(applies PromptEval estimator + center/tail + over-dispersion to the fresh Y).
+
+**Early fresh results (0.5B, before pause):** large, genuine format-driven spread confirmed —
+marketing per-template acc 0.30-0.77 (spread 0.43); high_school_psychology 0.22-0.69 (spread 0.39).
+This is the LARGE-true-spread regime (unlike released MMLU's tiny spread), so we expect milder
+over-dispersion (~1.5-2x) but the tail>center gap should still hold — testing the estimator across
+both regimes.
+
+**State at pause:** all background jobs stopped cleanly. Both models fully cached
+(Qwen2.5-0.5B 953MB, Qwen2.5-1.5B 4.2GB) — no re-download on resume. Added per-subject
+CHECKPOINTING to `fresh_generate.py` (saves results/fresh/Y_<model>.json after each subject and
+skips completed subjects on restart), so the earlier lost partial run won't recur.
+
+**TO RESUME:** activate conda `research`, then:
+```
+python src/fresh_generate.py --model Qwen/Qwen2.5-0.5B-Instruct \
+  --subjects marketing high_school_psychology nutrition sociology management human_aging \
+  --n_templates 40 --n_items 100 --batch 32
+python src/fresh_generate.py --model Qwen/Qwen2.5-1.5B-Instruct --subjects <same>   # 2nd model
+python src/fresh_analyze.py    # combined over-dispersion test across all fresh cells
+```
+Pace ~15 min/subject on MPS. Then fold the fresh-data replication into paper §Generalization.
