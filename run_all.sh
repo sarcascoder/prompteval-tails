@@ -34,6 +34,17 @@ python src/fix_splithalf.py --bench BBH     --budget 1600 --seeds 3
 python src/fix_splithalf.py --bench LMentry --budget 200  --seeds 3
 python src/fix_splithalf.py --bench LMentry --budget 1600 --seeds 3
 
+echo "== 4b. Fresh-data replication (optional; needs torch+transformers+datasets, ~1.5h on MPS) =="
+echo "   Skips automatically if torch is not installed."
+if python -c "import torch, transformers, datasets" 2>/dev/null; then
+  python src/fresh_generate.py --model Qwen/Qwen2.5-0.5B-Instruct \
+    --subjects marketing high_school_psychology nutrition sociology management human_aging \
+    --n_templates 40 --n_items 100 --batch 32
+  python src/fresh_analyze.py
+else
+  echo "   (torch/transformers/datasets not installed -> skipping fresh-data step)"
+fi
+
 echo "== 5. Figures =="
 python src/figures.py
 python src/figures_fix.py

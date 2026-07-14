@@ -291,6 +291,40 @@ LMentry           & 0.059 & 0.142 & $2.4\times$ & 85  & 0.022 & $3.4\times$ \\
 \end{tabular}
 \end{table}
 
+\paragraph{Replication on freshly-generated data.} All three benchmarks above reuse the
+authors' released correctness matrices. To rule out any artifact of their evaluation pipeline,
+we generated our own data from scratch: two local models (Qwen2.5-0.5B/1.5B-Instruct) evaluated
+on six MMLU subjects under an \emph{independently constructed} bank of $40$ format templates
+(varying instruction, option format, separators, answer cue, and few-shot count), scored by
+answer-letter log-probabilities---our own model, prompts, and scoring, sharing nothing with the
+release. Across $10$ fresh model$\times$subject cells, \pe{} reproduces the phenomenon at
+$B{=}200$: tail/center error ratio $\mathbf{5.8\times}$, low tail underestimated and high tail
+overestimated (signed $-0.13$/$+0.18$), \emph{all $10$ cells over-dispersed} (paired Wilcoxon
+$p=2\times10^{-3}$).
+
+Crucially, the two models fall in \emph{different regimes} and confirm the inverse-scaling law
+of \S\ref{sec:synth} within a single experiment (Table~\ref{tab:fresh}): the small model is
+prompt-\emph{sensitive} (true spread $0.37$) and over-disperses mildly ($1.8\times$), whereas the
+capable model is prompt-\emph{robust} (true spread $0.09$) and over-disperses severely
+($4.7\times$)---smaller true spread, larger inflation, exactly as on the released MMLU matrices
+($8.4\times$ at tiny spread) and in simulation. Released data, controlled simulation, and
+freshly-generated data give one coherent picture: the over-dispersion is a property of the
+estimator, not of any dataset.
+
+\begin{table}[h]\centering\small
+\caption{Fresh, self-generated data ($B{=}200$): the prompt-robust model (small true spread)
+over-disperses more, confirming the inverse-scaling mechanism across two real models.}
+\label{tab:fresh}
+\begin{tabular}{lcccc}
+\toprule
+model & cells & true spread & spread ratio & tail/center \\
+\midrule
+Qwen2.5-0.5B (sensitive) & 6 & 0.37 & $1.8\times$ & $4.7\times$ \\
+Qwen2.5-1.5B (robust)    & 4 & 0.09 & $4.7\times$ & $9.2\times$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \section{Related work}
 Prompt sensitivity of LLM benchmarks is well documented
 \citep{sclar2024quantifying,mizrahi2024state}, motivating multi-prompt evaluation and \pe{}

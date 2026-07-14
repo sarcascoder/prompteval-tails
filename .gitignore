@@ -9,3 +9,5 @@ external/
 paper/_pg*.png
 paper/*.aux
 paper/*.log
+results/fresh/*.log
+results/fresh/*_smoke.json

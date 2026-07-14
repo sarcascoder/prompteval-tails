@@ -88,7 +88,33 @@ both regimes.
 CHECKPOINTING to `fresh_generate.py` (saves results/fresh/Y_<model>.json after each subject and
 skips completed subjects on restart), so the earlier lost partial run won't recur.
 
-**TO RESUME:** activate conda `research`, then:
+### FRESH-DATA REPLICATION — SUCCESS (2026-07-14)
+0.5B generation completed all 6 subjects (checkpointing worked). Fresh spreads large & genuine
+(0.25-0.43). Applied PromptEval estimator to our own matrices:
+- @budget 200: tail/center = **4.66x** (vs released 4.24x); signed P5 = -0.088, P95 = +0.219;
+  **100% of cells over-dispersed**; median spread ratio 1.8x; Wilcoxon tail>center p=0.031 (n=6).
+- Spread ratio decays 1.8x->1.4x->1.1x over budgets 200/400/800 (finite-sample signature again).
+- Milder ratio than released data (1.8x vs 8.4x) is EXACTLY the synthetic prediction for the
+  large-true-spread regime. Released + synthetic + fresh now form one unified mechanistic story.
+- Conclusion: over-dispersion is a property of the ESTIMATOR, not the authors' pipeline. CONFIRMED.
+- 1.5B model NOT done: earlier kill left an incomplete download (missing safetensors); orchestrator
+  died on it via set -e AFTER 0.5B was safely saved. Optional to add for more cells (n=6 -> 12).
+
+### FRESH-DATA EXTENSION COMPLETE (2026-07-14): 2 models, 10 cells
+- Re-downloaded full 1.5B (2.9GB, w/ token); ran under `caffeinate -i -s` to stop laptop-sleep
+  stalling MPS (root cause of earlier hangs). Stopped after 4 of 6 1.5B subjects (user call).
+- COMBINED (6x 0.5B + 4x 1.5B = 10 cells) @ budget 200: tail/center = **5.79x**, signed
+  P5=-0.132 P95=+0.175, **100% cells over-dispersed**, median spread ratio 2.2x,
+  Wilcoxon p=**1.95e-3** (vs 0.03 at n=6 — adding 1.5B strengthened everything).
+- WITHIN-EXPERIMENT MECHANISM CONFIRMATION (the nice result):
+    0.5B (sensitive): true_spread 0.37 -> spread_ratio 1.75x, tail/center 4.66x
+    1.5B (robust):    true_spread 0.09 -> spread_ratio 4.68x, tail/center 9.18x
+  Smaller true spread => larger inflation. Matches released MMLU (8x @ tiny spread) + synthetic
+  sigma-sweep. Released + synthetic + fresh (2 models, both regimes) = one coherent mechanism.
+- Paper Generalization updated (Table: fresh 2-model regime contrast). Finding is a property of
+  the ESTIMATOR, not the authors' pipeline. DONE.
+
+**TO RESUME (optional strengthening):** activate conda `research`, then:
 ```
 python src/fresh_generate.py --model Qwen/Qwen2.5-0.5B-Instruct \
   --subjects marketing high_school_psychology nutrition sociology management human_aging \
