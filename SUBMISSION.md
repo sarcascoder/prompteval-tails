@@ -3,37 +3,26 @@
 Everything needed to publish this work. The paper source is `paper/main.tex`; a ready-to-upload
 arXiv package is `arxiv_submission.tar.gz` (verified to compile standalone).
 
----
-## 0. Fill in 3 placeholders first
-In `paper/main.tex` replace:
-- `YOUR NAME` → your name (and co-authors, if any)
-- `YOUR AFFILIATION \quad your.email@example.com` → affiliation (or "Independent Researcher") + email
-- `REPLACE-WITH-YOUR-USERNAME/prompteval-tails` (two places) → your GitHub repo path
-
-Then rebuild the tarball:
-```
-cd paper && tectonic main.tex && cd ..
-rm -rf arxiv_submission && mkdir -p arxiv_submission/figures
-cp paper/main.tex arxiv_submission/
-cp paper/figures/fig{1_center_vs_tail,2_overdispersion,3_tail_center_ratio,4_correction_mmlu,5_crossbench_fix}.png arxiv_submission/figures/
-tar -czf arxiv_submission.tar.gz -C arxiv_submission .
-```
+Author: **Anupam Deep Tripathi** (Independent Researcher, tanupam760@gmail.com).
 
 ---
-## 1. GitHub (do this first so the paper can link to it)
-```
-# create an empty public repo named e.g. prompteval-tails on github.com, then:
-git remote add origin https://github.com/<username>/prompteval-tails.git
-git push -u origin master     # (or: git branch -M main && git push -u origin main)
-```
-The repo already has README, LICENSE (MIT), requirements.txt, run_all.sh, code, figures, and
-RESEARCH_LOG. `external/` (upstream code+data) is git-ignored and re-cloned by `run_all.sh`.
+## 0. Placeholders — DONE
+Author block, email, and repo URL are filled in `paper/main.tex`, and `arxiv_submission.tar.gz`
+is rebuilt and verified. Nothing to do here.
+
+---
+## 1. GitHub — DONE ✅
+Live public repo: **https://github.com/sarcascoder/prompteval-tails**
+(README, MIT LICENSE, requirements, run_all.sh, code, figures, paper, research log. `external/`
+upstream code+data is git-ignored and re-cloned by `run_all.sh`.)
 
 ---
 ## 2. arXiv (immediate; free)
-1. Create an account at arxiv.org with an **institutional email if you have one** (helps skip
-   endorsement). Personal email is fine but first-time cs submissions may need an **endorsement**
-   from an existing arXiv author — see the note below.
+1. Create an account at arxiv.org. **Register/verify with your IIT Tirupati email
+   `ch21b008@iittp.ac.in`** if it still works — an `.ac.in` address is an "academic" domain and
+   usually grants auto-endorsement for `cs.CL`/`cs.LG`, even after graduation, as long as you can
+   still receive mail there. You can add `tanupam760@gmail.com` as a secondary/contact email. If
+   the college mailbox is dead, fall back to the endorsement route (note below).
 2. Start a new submission → upload **`arxiv_submission.tar.gz`** (arXiv compiles the LaTeX).
 3. Metadata:
    - **Primary category:** `cs.CL` (Computation and Language)
