@@ -18,3 +18,5 @@ results/repro_core_*.json
 results/splithalf_*.json
 results/fix*_*.json
 results/synthetic.json
+results/*.log
+results/fresh/*_smoke.json
