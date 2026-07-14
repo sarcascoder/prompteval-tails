@@ -12,10 +12,12 @@
 
 \newcommand{\pe}{\textsc{PromptEval}}
 
+% arXiv primary category: cs.CL ; cross-list: cs.LG, stat.ML
 \title{\bf Reliable in the Center, Unreliable at the Edges:\\
 Auditing the Tail Fragility of Multi-Prompt LLM Evaluation}
-\author{}
-\date{}
+\author{YOUR NAME\thanks{Code and data: \url{https://github.com/REPLACE-WITH-YOUR-USERNAME/prompteval-tails}}\\
+\small YOUR AFFILIATION \quad \texttt{your.email@example.com}}
+\date{\today}
 
 \begin{document}
 \maketitle
@@ -360,8 +362,15 @@ works in the common severe regime and characterized failure modes elsewhere. The
 is simple: \emph{trust the center; correct the edges only when reliability can be estimated,
 and otherwise read them as bounds.}
 
-\paragraph{Reproducibility.} All code, the exact-match reproduction, and figure-generating
-scripts run on a laptop from the authors' public data; see the repository.
+\paragraph{Reproducibility.} All code, the exact-match reproduction, the controlled simulation,
+the freshly-generated model evaluations, and every figure run on a single laptop (CPU only) at
+zero cost from public data. The repository provides a one-command reproduction
+(\texttt{run\_all.sh}), pinned dependencies, and a full research log:
+\begin{center}\texttt{\url{https://github.com/REPLACE-WITH-YOUR-USERNAME/prompteval-tails}}\end{center}
+
+\paragraph{Acknowledgements.} We thank the authors of \pe{} \citep{polo2024prompteval} for
+releasing their code and evaluation data under a permissive licence, without which this
+reproduction and analysis would not have been possible.
 
 \small
 \bibliographystyle{plainnat}
@@ -374,8 +383,8 @@ scripts run on a laptop from the authors' public data; see the repository.
 \newblock State of what art? A call for multi-prompt LLM evaluation. \emph{TACL}, 2024.
 \bibitem[Madaan et al.(2024)]{madaan2024quantifying} L.~Madaan et al.
 \newblock Quantifying variance in evaluation benchmarks. 2024. arXiv:2406.10229.
-\bibitem[Anonymous(2026a)]{rankintervals2026} Rank intervals for leaderboards: a hierarchical framework for model evaluation. 2026. arXiv:2606.08679.
-\bibitem[Anonymous(2026b)]{tailfragile2026} Tail-shape estimation in LLM evaluation is fragile. 2026. arXiv:2606.16511.
+\bibitem[Rank Intervals(2026)]{rankintervals2026} Rank intervals for leaderboards: a hierarchical framework for model evaluation. Preprint, 2026. arXiv:2606.08679.
+\bibitem[Tail-shape(2026)]{tailfragile2026} Tail-shape estimation in LLM evaluation is fragile: a protocol for diagnosing false positives. Preprint, 2026. arXiv:2606.16511.
 \end{thebibliography}
 
 \end{document}

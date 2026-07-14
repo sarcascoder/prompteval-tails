@@ -11,3 +11,5 @@ paper/*.aux
 paper/*.log
 results/fresh/*.log
 results/fresh/*_smoke.json
+arxiv_submission/
+arxiv_submission.tar.gz
